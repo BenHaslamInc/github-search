@@ -25,7 +25,7 @@ optional arguments:
 
 ## Build
 ```
-docker build -t eastata/yet-another-one-github-search:latest .
+docker build -t BenHaslamInc/github-search:latest .
 ```
 
 ## Links
