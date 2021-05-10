@@ -8,7 +8,7 @@ Generate new `Personal Access Token` for [GitHub](https://github.com/settings/to
 export GITHUB_PAT=%GITHUB PERSONAL ACCESS TOKEN%
 
 docker run --rm --env GITHUB_PAT github-search \
-    --org "clearmatics"\
+    --org "BenHaslamInc"\
     --dir ".github/workflows/" \
     --pattern "set-env|add-path"
 ```
