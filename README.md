@@ -17,9 +17,9 @@ docker run --rm --env GITHUB_PAT github-search \
 
 ```
 optional arguments:
-  -h, --help         show this help message and exit
-  --org ORG          GitHub organisation (default: clearmatics)
-  --name              Search name (default: LICENCE)
+  -h              show this help message and exit
+  --org           GitHub organisation (default: clearmatics)
+  --name          Search name (default: LICENCE)
 ```
 
 ## Build
