@@ -23,7 +23,6 @@ def get_repos(org, header_auth):
     :param org: GitHub organisation name
     :param header_auth: {"Authorization": "Bearer " + github_token} #GitHub Personal Access Token
     :return: list of repositories available for this organisation
-
     GitHub has rate limits up to 100 nodes for each requests
     https://docs.github.com/en/free-pro-team@latest/graphql/overview/resource-limitations#node-limit
     If number of repos over 100 we must use pagination https://graphql.org/learn/pagination/
@@ -57,49 +56,41 @@ def get_branches(org, header_auth, repo):
     return branches
 
 
-def get_files(org, header_auth, repo, branch, search_dir):
-    q_vars = {"owner": org, "repo": repo, "expression": branch + ":" + search_dir}
+def get_files(org, header_auth, repo, branch):
+    q_vars = {"owner": org, "repo": repo, "expression": branch + ":"}
     result = run_query('get_files_first.graphql', header_auth, q_vars)
     files = []
     if result["data"]["repository"]["filename"]:
         for file in result["data"]["repository"]["filename"]["entries"]:
-            if not bool(file["object"]["isBinary"]):
-                files.append({"path": file["path"],
-                              "text": file["object"]["text"]
-                              })
+            files.append({"path": file["path"]})
     return files
 
 
-def parse_files(files, pattern):
+def parse_files(files, name):
     matches = []
     for file in files:
-        match = re.search(pattern, file["text"])
-        if match:
+        # print ("filename: ", file["path"])
+        if file["path"] == name:
             matches.append(file["path"])
     return matches
 
 
 def main():
     parser = argparse.ArgumentParser(description='Github search by all branches')
-    parser.add_argument('--dir',
-                        dest='dir',
-                        default=".github/workflows/",
-                        type=str,
-                        help='Dir for search (default: %(default)s)'
-                        )
     parser.add_argument('--org',
                         dest='org',
-                        default="clearmatics",
+                        default="BenHaslamInc",
                         type=str,
                         help='GitHub organisation (default: %(default)s)'
                         )
-    parser.add_argument('--pattern',
-                        dest='pattern',
-                        default="set-env|add-path",
+    parser.add_argument('--name',
+                        dest='name',
+                        default="LICENSE",
                         type=str,
                         help='Search pattern (default: %(default)s)'
                         )
     args = parser.parse_args()
+
 
     try:
         github_token = os.environ["GITHUB_PAT"]
@@ -113,9 +104,9 @@ def main():
     for repo in repos:
         branches = get_branches(args.org, header_auth, repo)
         for branch in branches:
-            files = get_files(args.org, header_auth, repo, branch, args.dir)
+            files = get_files(args.org, header_auth, repo, branch)
             if files:
-                matches = parse_files(files, args.pattern)
+                matches = parse_files(files, args.name)
                 if matches:
                     print(f'git@github.com:{args.org}/{repo}.git -b {branch} \nFiles: {matches}')
 
