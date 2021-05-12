@@ -1,5 +1,5 @@
-# Yet another one github search
-Github search by all branches
+# Github LICENCE searcher
+Github search for Licence (or another file) on all branches
 
 ## Usage
 Generate new `Personal Access Token` for [GitHub](https://github.com/settings/tokens)
