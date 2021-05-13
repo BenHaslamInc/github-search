@@ -101,40 +101,63 @@ def main():
 
     header_auth = {"Authorization": "Bearer " + github_token}
     repos_no_licence = []
+    repos_wrong_branch = []
+
     repos = get_repos(args.org, header_auth)
     for repo in repos:
         Licence = False
-        branches = get_branches(args.org, header_auth, repo)
-        
-        if "master" in branches:    #Check the master branch
-            files = get_files(args.org, header_auth, repo, "master")
-            if files:
-                matches = parse_files(files, args.name)
-                if matches:
-                    print(f'git@github.com:{args.org}/{repo}.git -b {"master"} \nFiles: {matches}')
-                    Licence = True
 
-        elif "main" in branches:    #Check the main branch
+        # Check 'master' branch first:
+        files = get_files(args.org, header_auth, repo, "master")
+        if files:
+            matches = parse_files(files, args.name)
+            if matches:
+                # print(f'git@github.com:{args.org}/{repo}.git -b {"master"} \nFiles: {matches}')
+                Licence = True
+        
+        # Then the 'main' branch:
+
+        if not Licence:
             files = get_files(args.org, header_auth, repo, "main")
             if files:
                 matches = parse_files(files, args.name)
                 if matches:
-                    print(f'git@github.com:{args.org}/{repo}.git -b {"main"} \nFiles: {matches}')
+                    # print(f'git@github.com:{args.org}/{repo}.git -b {"main"} \nFiles: {matches}')
                     Licence = True
+        
+        # Then the 'develop' branch:
 
-        else:
+        if not Licence:
+            files = get_files(args.org, header_auth, repo, "develop")
+            if files:
+                matches = parse_files(files, args.name)
+                if matches:
+                    # print(f'git@github.com:{args.org}/{repo}.git -b {"develop"} \nFiles: {matches}')
+                    Licence = True
+        
+        # Then all the others:
+
+        if not Licence:
+            branches = get_branches(args.org, header_auth, repo)
             for branch in branches:
-                files = get_files(args.org, header_auth, repo, branch)
-                if files:
-                    matches = parse_files(files, args.name)
-                    if matches:
-                        print(f'git@github.com:{args.org}/{repo}.git -b {branch} \nFiles: {matches}')
-                        Licence = True
+                if not Licence:
+                    files = get_files(args.org, header_auth, repo, branch)
+                    if files:
+                        matches = parse_files(files, args.name)
+                        if matches:
+                            # print(f'git@github.com:{args.org}/{repo}.git -b {branch} \nFiles: {matches}')
+                            repos_wrong_branch.append( [repo, branch])
+
+                            Licence = True
+
         if not Licence:
             repos_no_licence.append(repo)
     
     print ('Repos without licences: ')
     print (repos_no_licence)
+
+    print ('Repos with licence in the wrong branch:')
+    print (repos_wrong_branch)
 
 
 if __name__ == '__main__':
