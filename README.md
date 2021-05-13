@@ -1,4 +1,4 @@
-# Github LICENCE searcher
+# Github LICENSE searcher
 Github search for Licence (or another file) on all branches
 
 ## Usage
@@ -9,7 +9,7 @@ export GITHUB_PAT=%GITHUB PERSONAL ACCESS TOKEN%
 
 docker run --rm --env GITHUB_PAT github-search \
     --org "BenHaslamInc"\
-    --name "LICENCE"
+    --name "LICENSE"
 ```
 
 ## CLI options
@@ -18,7 +18,7 @@ docker run --rm --env GITHUB_PAT github-search \
 optional arguments:
   -h              show this help message and exit
   --org           GitHub organisation (default: clearmatics)
-  --name          Search name (default: LICENCE)
+  --name          Search name (default: LICENSE)
 ```
 
 ## Build
