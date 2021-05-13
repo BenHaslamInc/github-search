@@ -1,5 +1,6 @@
 # Github LICENSE searcher
-Github search for Licence (or another file) on all branches
+Github search for license (or another file) on all branches
+Returns list of repos that dont have a license and a list of repos that have one in an unusual branch
 
 ## Usage
 Generate new `Personal Access Token` for [GitHub](https://github.com/settings/tokens)
