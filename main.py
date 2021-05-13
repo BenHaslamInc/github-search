@@ -79,7 +79,7 @@ def main():
     parser = argparse.ArgumentParser(description='Github search by all branches')
     parser.add_argument('--org',
                         dest='org',
-                        default="BenHaslamInc",
+                        default="clearmatics",
                         type=str,
                         help='GitHub organisation (default: %(default)s)'
                         )
