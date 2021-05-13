@@ -100,15 +100,41 @@ def main():
         sys.exit(1)
 
     header_auth = {"Authorization": "Bearer " + github_token}
+    repos_no_licence = []
     repos = get_repos(args.org, header_auth)
     for repo in repos:
+        Licence = False
         branches = get_branches(args.org, header_auth, repo)
-        for branch in branches:
-            files = get_files(args.org, header_auth, repo, branch)
+        
+        if "master" in branches:    #Check the master branch
+            files = get_files(args.org, header_auth, repo, "master")
             if files:
                 matches = parse_files(files, args.name)
                 if matches:
-                    print(f'git@github.com:{args.org}/{repo}.git -b {branch} \nFiles: {matches}')
+                    print(f'git@github.com:{args.org}/{repo}.git -b {"master"} \nFiles: {matches}')
+                    Licence = True
+
+        elif "main" in branches:    #Check the main branch
+            files = get_files(args.org, header_auth, repo, "main")
+            if files:
+                matches = parse_files(files, args.name)
+                if matches:
+                    print(f'git@github.com:{args.org}/{repo}.git -b {"main"} \nFiles: {matches}')
+                    Licence = True
+
+        else:
+            for branch in branches:
+                files = get_files(args.org, header_auth, repo, branch)
+                if files:
+                    matches = parse_files(files, args.name)
+                    if matches:
+                        print(f'git@github.com:{args.org}/{repo}.git -b {branch} \nFiles: {matches}')
+                        Licence = True
+        if not Licence:
+            repos_no_licence.append(repo)
+    
+    print ('Repos without licences: ')
+    print (repos_no_licence)
 
 
 if __name__ == '__main__':
