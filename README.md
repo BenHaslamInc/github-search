@@ -9,7 +9,6 @@ export GITHUB_PAT=%GITHUB PERSONAL ACCESS TOKEN%
 
 docker run --rm --env GITHUB_PAT github-search \
     --org "BenHaslamInc"\
-    --dir ".github/workflows/" \
     --name "LICENCE"
 ```
 
