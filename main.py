@@ -70,7 +70,7 @@ def parse_files(files, name):
     matches = []
     for file in files:
         # print ("filename: ", file["path"])
-        if file["path"] == name:
+        if name in file["path"]:
             matches.append(file["path"])
     return matches
 
