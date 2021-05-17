@@ -74,6 +74,14 @@ def parse_files(files, name):
             matches.append(file["path"])
     return matches
 
+def rest_api_check(org, header_auth, repo):
+    URL = 'https://api.github.com/repos/' + org + '/' + repo + '/license'
+    response = requests.head(URL, headers = header_auth)
+    if str(response) == '<Response [200]>':
+        return True
+
+
+
 
 def main():
     parser = argparse.ArgumentParser(description='Github search by all branches')
@@ -107,23 +115,9 @@ def main():
     for repo in repos:
         Licence = False
 
-        # Check 'master' branch first:
-        files = get_files(args.org, header_auth, repo, "master")
-        if files:
-            matches = parse_files(files, args.name)
-            if matches:
-                # print(f'git@github.com:{args.org}/{repo}.git -b {"master"} \nFiles: {matches}')
-                Licence = True
-        
-        # Then the 'main' branch:
+        # First use REST API for an initial fast licence check on Master / Main
 
-        if not Licence:
-            files = get_files(args.org, header_auth, repo, "main")
-            if files:
-                matches = parse_files(files, args.name)
-                if matches:
-                    # print(f'git@github.com:{args.org}/{repo}.git -b {"main"} \nFiles: {matches}')
-                    Licence = True
+        Licence = rest_api_check(args.org, header_auth, repo)
         
         # Then the 'develop' branch:
 
@@ -133,6 +127,7 @@ def main():
                 matches = parse_files(files, args.name)
                 if matches:
                     # print(f'git@github.com:{args.org}/{repo}.git -b {"develop"} \nFiles: {matches}')
+                    repos_wrong_branch.append( [repo, "develop"])
                     Licence = True
         
         # Then all the others:
